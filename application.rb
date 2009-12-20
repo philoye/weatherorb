@@ -5,6 +5,16 @@ require 'smoke'
 module WeatherOrb
   class Application < Sinatra::Base
 
+    set :public, File.join(File.dirname(__FILE__),'public')
+    set :views, File.join(File.dirname(__FILE__),'views')
+    set :static, true
+
+    helpers do
+      def versioned_stylesheet(stylesheet)
+        "/#{stylesheet}.css?" + File.mtime(File.join(File.dirname(__FILE__), "public", "#{stylesheet}.css")).to_i.to_s
+      end
+    end
+
     Smoke.configure do |c|
       c[:cache][:enabled] = true
       c[:cache][:store] = :memory
