@@ -30,19 +30,25 @@ Client client(server, 80);
 void setup() {
   Serial.begin(9600);
 
+  client.println();
+  client.println();
   Serial.println("getting ip...");
   int result = Dhcp.beginWithDHCP(mac);
 
   if(result == 1) {
     ipAcquired = true;
-    
     byte buffer[6];
-    Serial.println("ip acquired...");
     
     Dhcp.getMacAddress(buffer);
     Dhcp.getLocalIp(buffer);
+    Serial.print("Local IP Address: ");
+    printArray(&Serial, ".", buffer, 4, 10);
     Dhcp.getSubnetMask(buffer);
+    Serial.print("Subnet mask: ");
+    printArray(&Serial, ".", buffer, 4, 10);
     Dhcp.getGatewayIp(buffer);
+    Serial.print("Gateway IP Address: ");
+    printArray(&Serial, ".", buffer, 4, 10);
     Dhcp.getDhcpServerIp(buffer);
     Dhcp.getDnsServerIp(buffer);
     
@@ -54,7 +60,7 @@ void setup() {
       Serial.println("connected");
       client.println("GET http://weatherorb.heroku.com/weather.xml HTTP/1.0");
       client.println();
-      delay(2000);
+      delay(3000);
     } else {
       Serial.println("connection failed");
     }
@@ -72,8 +78,10 @@ void loop() {
   if (!client.connected()) {
     client.stop();
 
-    int t = 1000 * CHECK_INTERVAL;
-    delay(t);
+    for (int t = 1; t <= CHECK_INTERVAL; t++) {
+      Serial.println(CHECK_INTERVAL + 1 - t);
+      delay(1000);
+    }
 
     if (client.connect()) {
       client.println("GET http://weatherorb.heroku.com/weather.xml HTTP/1.0");
@@ -130,7 +138,7 @@ void serialEvent() {
          Serial.print(dataStr);
       }
       if (matchTag("<temp>")) {
-	 Serial.print("Current: ");
+	 Serial.print(" Current: ");
          processTemp(dataStr);
       }
       if (matchTag("<forecast>")) {
@@ -146,7 +154,8 @@ void serialEvent() {
          processTemp(dataStr);
          Serial.println("");
       }
-
+      client.println();
+      
       // Clear all strings
       clearStr(tmpStr);
       clearStr(tagStr);
@@ -223,4 +232,17 @@ boolean matchTag (char* searchTag) {
       return false;
    }
 }
+
+void printArray(Print *output, char* delimeter, byte* data, int len, int base) {
+  char buf[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  for(int i = 0; i < len; i++) {
+    if(i != 0) {
+      output->print(delimeter);
+    }
+    output->print(itoa(data[i], buf, base));
+  }
+  output->println();
+}
+
+
 
