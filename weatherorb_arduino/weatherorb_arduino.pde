@@ -22,7 +22,7 @@ boolean tagFlag = false;
 boolean dataFlag = false;
 
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-byte server[] = { 75, 101, 163, 44 };
+byte server[] = { 75, 101, 163, 44 }; // heroku's primary ip address
 boolean ipAcquired = false;
 
 Client client(server, 80);
@@ -52,7 +52,7 @@ void setup() {
 
     if (client.connect()) {
       Serial.println("connected");
-      client.println("GET http://weatherorb.heroku.com/weather.xml HTTP/1.0");    
+      client.println("GET http://weatherorb.heroku.com/weather.xml HTTP/1.0");
       client.println();
       delay(2000);
     } else {
@@ -76,7 +76,7 @@ void loop() {
     delay(t);
 
     if (client.connect()) {
-      client.println("GET / HTTP/1.0");    
+      client.println("GET http://weatherorb.heroku.com/weather.xml HTTP/1.0");
       client.println();
       delay(2000);
     } else {
@@ -127,7 +127,7 @@ void serialEvent() {
 
       if (matchTag("<condition>")) {
 	 Serial.print("Condition: ");
-         processTemp(dataStr);
+         Serial.print(dataStr);
       }
       if (matchTag("<temp>")) {
 	 Serial.print("Current: ");
@@ -135,7 +135,7 @@ void serialEvent() {
       }
       if (matchTag("<forecast>")) {
 	 Serial.print("Forecast: ");
-         processTemp(dataStr);
+         Serial.print(dataStr);
       }
       if (matchTag("<high>")) {
 	 Serial.print(", High: ");
