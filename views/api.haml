@@ -1,0 +1,7 @@
+!!! XML
+%weather
+  %condition= @weather[:condition][:text]
+  %temp= @weather[:condition][:temp]
+  %forecast= @weather[:forecast][0]["text"]
+  %low= @weather[:forecast][0]["low"]
+  %high= @weather[:forecast][0]["high"]
