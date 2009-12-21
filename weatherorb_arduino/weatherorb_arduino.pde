@@ -5,6 +5,8 @@
 #include <string.h>
 #include <Ethernet.h>
 #include "Dhcp.h"
+#include "Wire.h"
+#include "BlinkM_funcs.h"
 
 // Define Constants
 const int MAX_STRING_LEN = 20;   // Max string length may have to be adjusted depending on data to be extracted
@@ -16,6 +18,10 @@ char dataStr[MAX_STRING_LEN] = "";
 char tmpStr[MAX_STRING_LEN] = "";
 char endTag[3] = { '<', '/', '\0' };
 int len;
+
+// Store the forecast
+int forecast_temp;
+boolean rain_pulse = false;
 
 // Flags to differentiate XML tags from document elements (ie. data)
 boolean tagFlag = false;
@@ -29,6 +35,10 @@ Client client(server, 80);
 
 void setup() {
   Serial.begin(9600);
+
+  BlinkM_beginWithPower();
+  BlinkM_playScript( 0x00, 10,0,0 ); // play a script while we’re waiting to show no data received yet
+  BlinkM_setFadeSpeed(0x00, 10);
 
   client.println();
   client.println();
@@ -64,6 +74,7 @@ void setup() {
     } else {
       Serial.println("connection failed");
     }
+    BlinkM_stopScript( 0 ); // turn off startup script
   } else {
     Serial.println("unable to acquire ip address...");
   }
@@ -93,94 +104,117 @@ void loop() {
   }
 }
 
-// Process each char from web
-void serialEvent() {
-
-   char inChar = client.read();
-  
-   if (inChar == '<') {
-      addChar(inChar, tmpStr);
-      tagFlag = true;
-      dataFlag = false;
-   } else if (inChar == '>') {
-      addChar(inChar, tmpStr);
-      if (tagFlag) {      
-         strncpy(tagStr, tmpStr, strlen(tmpStr)+1);
-      }
-      clearStr(tmpStr);
-      tagFlag = false;
-      dataFlag = true;      
-      
-   } else if (inChar != 10) {
-      if (tagFlag) {
-         // Add tag char to string
-         addChar(inChar, tmpStr);
-
-         // Check for </XML> end tag, ignore it
-         if ( tagFlag && strcmp(tmpStr, endTag) == 0 ) {
-            clearStr(tmpStr);
-            tagFlag = false;
-            dataFlag = false;
-         }
-      }
-      
-      if (dataFlag) {
-         // Add data char to string
-         addChar(inChar, dataStr);
-      }
-   }  
-  
-   // If a LF, process the line
-   if (inChar == 10 ) {
-
-      if (matchTag("<condition>")) {
-	 Serial.print("Condition: ");
-         Serial.print(dataStr);
-      }
-      if (matchTag("<temp>")) {
-	 Serial.print(" Current: ");
-         processTemp(dataStr);
-      }
-      if (matchTag("<forecast>")) {
-	 Serial.print("Forecast: ");
-         Serial.print(dataStr);
-      }
-      if (matchTag("<high>")) {
-	 Serial.print(", High: ");
-         processTemp(dataStr);
-      }
-      if (matchTag("<low>")) {
-	 Serial.print(", Low: ");
-         processTemp(dataStr);
-         Serial.println("");
-      }
-      client.println();
-      
-      // Clear all strings
-      clearStr(tmpStr);
-      clearStr(tagStr);
-      clearStr(dataStr);
-
-      // Clear Flags
-      tagFlag = false;
-      dataFlag = false;
-   }
-}
-
 /////////////////////
 // Weather Functions
 /////////////////////
 
+void processRain(char* str) {
+  int condition_code = atoi(str);
+  rain_pulse = false;
+  switch (condition_code) {
+    case 3: // heavy rain
+    case 4:
+    case 37:
+    case 38:
+    case 39:
+    case 45:
+    case 47:
+      rain_pulse = true;
+      break;
+    case 9: // uh, medium rain?
+      rain_pulse = true;
+      break;
+    case 11: // light rain?
+    case 12:
+      rain_pulse = true;
+      break;
+    default:
+      break;
+  }
+}
+
 void processTemp(char* str) {
-   Serial.print(str);
-   int t = atoi(str);
-   if (t > 30) {
-     Serial.print(" HOT ");
-   } else if (t < 17) {
-     Serial.print(" COLD ");
-   } else {
-     Serial.print(" NICE ");
-   }
+  Serial.print(str);
+  forecast_temp = atoi(str);
+  if (forecast_temp > 35) {
+    BlinkM_fadeToHSB(0x00, 0, 100, 100 ); // red
+    Serial.println(" VERY HOT - red");
+  } else if (forecast_temp > 26) {
+    BlinkM_fadeToHSB(0x00, 35, 100, 100 ); // orange
+    Serial.println(" HOT - orange ");
+  } else if (forecast_temp < 18) {
+    BlinkM_fadeToHSB(0x00, 225, 50, 100 ); // light blue
+    Serial.println(" COLD - light blue ");
+  } else if (forecast_temp < 13) {
+    BlinkM_fadeToHSB(0x00, 225, 100, 100 ); // dark blue
+    Serial.println(" REALLY COLD - dark blue");
+  } else {
+    BlinkM_fadeToHSB(0x00, 60, 100, 100 ); // yellow
+    Serial.println(" NICE - yellow");
+  }
+}
+
+
+
+// Process each char from web
+void serialEvent() {
+
+  char inChar = client.read();
+
+  if (inChar == '<') {
+    addChar(inChar, tmpStr);
+    tagFlag = true;
+    dataFlag = false;
+  } else if (inChar == '>') {
+    addChar(inChar, tmpStr);
+    if (tagFlag) {      
+       strncpy(tagStr, tmpStr, strlen(tmpStr)+1);
+    }
+    clearStr(tmpStr);
+    tagFlag = false;
+    dataFlag = true;      
+  
+  } else if (inChar != 10) {
+    if (tagFlag) {
+      // Add tag char to string
+      addChar(inChar, tmpStr);
+
+      // Check for </XML> end tag, ignore it
+      if ( tagFlag && strcmp(tmpStr, endTag) == 0 ) {
+        clearStr(tmpStr);
+        tagFlag = false;
+        dataFlag = false;
+      }
+    }
+      
+    if (dataFlag) {
+      // Add data char to string
+      addChar(inChar, dataStr);
+    }
+  }  
+
+  // If a LF, process the line
+  if (inChar == 10 ) {
+
+  if (matchTag("<forecast_code>")) {
+    Serial.print("High: ");
+    processRain(dataStr);
+  }
+  if (matchTag("<high>")) {
+    Serial.print("High: ");
+    processTemp(dataStr);
+  }
+  client.println();
+
+  // Clear all strings
+  clearStr(tmpStr);
+  clearStr(tagStr);
+  clearStr(dataStr);
+
+  // Clear Flags
+  tagFlag = false;
+  dataFlag = false;
+  }
 }
 
 /////////////////////
@@ -189,48 +223,48 @@ void processTemp(char* str) {
 
 // Function to clear a string
 void clearStr (char* str) {
-   int len = strlen(str);
-   for (int c = 0; c < len; c++) {
-      str[c] = 0;
-   }
+  int len = strlen(str);
+  for (int c = 0; c < len; c++) {
+    str[c] = 0;
+  }
 }
 
 //Function to add a char to a string and check its length
 void addChar (char ch, char* str) {
-   char *tagMsg  = "<TRUNCATED_TAG>";
-   char *dataMsg = "-TRUNCATED_DATA-";
+  char *tagMsg  = "<TRUNCATED_TAG>";
+  char *dataMsg = "-TRUNCATED_DATA-";
 
-   // Check the max size of the string to make sure it doesn't grow too
-   // big.  If string is beyond MAX_STRING_LEN assume it is unimportant
-   // and replace it with a warning message.
-   if (strlen(str) > MAX_STRING_LEN - 2) {
-      if (tagFlag) {
-         clearStr(tagStr);
-         strcpy(tagStr,tagMsg);
-      }
-      if (dataFlag) {
-         clearStr(dataStr);
-         strcpy(dataStr,dataMsg);
-      }
+  // Check the max size of the string to make sure it doesn't grow too
+  // big.  If string is beyond MAX_STRING_LEN assume it is unimportant
+  // and replace it with a warning message.
+  if (strlen(str) > MAX_STRING_LEN - 2) {
+    if (tagFlag) {
+      clearStr(tagStr);
+      strcpy(tagStr,tagMsg);
+    }
+    if (dataFlag) {
+      clearStr(dataStr);
+      strcpy(dataStr,dataMsg);
+    }
 
-      // Clear the temp buffer and flags to stop current processing
-      clearStr(tmpStr);
-      tagFlag = false;
-      dataFlag = false;
+    // Clear the temp buffer and flags to stop current processing
+    clearStr(tmpStr);
+    tagFlag = false;
+    dataFlag = false;
 
-   } else {
-      // Add char to string
-      str[strlen(str)] = ch;
-   }
+  } else {
+    // Add char to string
+    str[strlen(str)] = ch;
+  }
 }
 
 // Function to check the current tag for a specific string
 boolean matchTag (char* searchTag) {
-   if ( strcmp(tagStr, searchTag) == 0 ) {
-      return true;
-   } else {
-      return false;
-   }
+  if ( strcmp(tagStr, searchTag) == 0 ) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void printArray(Print *output, char* delimeter, byte* data, int len, int base) {
