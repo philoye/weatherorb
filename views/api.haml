@@ -1,7 +1,9 @@
 !!! XML
 %weather
   %condition= @weather[:condition][:text]
+  %condition_code= @weather[:condition][:code]
   %temp= @weather[:condition][:temp]
   %forecast= @weather[:forecast][0]["text"]
+  %forecast_code= @weather[:forecast][0]["code"]
   %low= @weather[:forecast][0]["low"]
   %high= @weather[:forecast][0]["high"]
