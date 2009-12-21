@@ -1,7 +1,3 @@
-//////////////////////////////////////////////
-//
-//////////////////////////////////////////////
-
 #include <string.h>
 #include <Ethernet.h>
 #include "Dhcp.h"
@@ -37,11 +33,9 @@ void setup() {
   Serial.begin(9600);
 
   BlinkM_beginWithPower();
-  BlinkM_playScript( 0x00, 10,0,0 ); // play a script while we’re waiting to show no data received yet
+  BlinkM_playScript( 0x00, 2,0,0 ); // play a script while we’re waiting to show no data received yet
   BlinkM_setFadeSpeed(0x00, 10);
 
-  client.println();
-  client.println();
   Serial.println("getting ip...");
   int result = Dhcp.beginWithDHCP(mac);
 
@@ -51,19 +45,16 @@ void setup() {
     
     Dhcp.getMacAddress(buffer);
     Dhcp.getLocalIp(buffer);
-    Serial.print("Local IP Address: ");
+    Serial.print("Local IP address: ");
     printArray(&Serial, ".", buffer, 4, 10);
     Dhcp.getSubnetMask(buffer);
-    Serial.print("Subnet mask: ");
-    printArray(&Serial, ".", buffer, 4, 10);
     Dhcp.getGatewayIp(buffer);
-    Serial.print("Gateway IP Address: ");
+    Serial.print("Gateway IP address: ");
     printArray(&Serial, ".", buffer, 4, 10);
     Dhcp.getDhcpServerIp(buffer);
     Dhcp.getDnsServerIp(buffer);
     
     delay(5000);
-    
     Serial.println("connecting...");
 
     if (client.connect()) {
@@ -104,9 +95,9 @@ void loop() {
   }
 }
 
-/////////////////////
+////////////////////
 // Weather Functions
-/////////////////////
+////////////////////
 
 void processRain(char* str) {
   int condition_code = atoi(str);
@@ -155,8 +146,10 @@ void processTemp(char* str) {
 }
 
 
-
+/////////////////////
 // Process each char from web
+/////////////////////
+
 void serialEvent() {
 
   char inChar = client.read();
