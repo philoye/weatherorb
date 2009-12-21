@@ -8,7 +8,7 @@
 
 // Define Constants
 const int MAX_STRING_LEN = 20;   // Max string length may have to be adjusted depending on data to be extracted
-const int CHECK_INTERVAL = 300;    // Check interval in seconds
+const int CHECK_INTERVAL = 60;    // Check interval in seconds
 
 // Setup vars
 char tagStr[MAX_STRING_LEN]  = "";
@@ -52,7 +52,7 @@ void setup() {
     Dhcp.getDhcpServerIp(buffer);
     Dhcp.getDnsServerIp(buffer);
     
-    delay(3000);
+    delay(5000);
     
     Serial.println("connecting...");
 
@@ -243,6 +243,3 @@ void printArray(Print *output, char* delimeter, byte* data, int len, int base) {
   }
   output->println();
 }
-
-
-
