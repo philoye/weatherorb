@@ -14,7 +14,7 @@ const int CHECK_INTERVAL = 60;    // Check interval in seconds
 char tagStr[MAX_STRING_LEN]  = "";
 char dataStr[MAX_STRING_LEN] = "";
 char tmpStr[MAX_STRING_LEN] = "";
-char endTag[3] = {'<', '/', '\0'};
+char endTag[3] = { '<', '/', '\0' };
 int len;
 
 // Flags to differentiate XML tags from document elements (ie. data)
