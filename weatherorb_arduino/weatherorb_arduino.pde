@@ -24,10 +24,11 @@ boolean tagFlag = false;
 boolean dataFlag = false;
 
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-byte server[] = { 75, 101, 163, 44 }; // heroku's primary ip address
-boolean ipAcquired = false;
+byte server[] = { 75, 101, 163, 44 };
+byte port = 80;
 
-Client client(server, 80);
+boolean ipAcquired = false;
+Client client(server, port);
 
 void setup() {
   Serial.begin(9600);
@@ -127,24 +128,33 @@ void processRain(char* str) {
 void processTemp(char* str) {
   Serial.print(str);
   forecast_temp = atoi(str);
+
   if (forecast_temp > 35) {
-    BlinkM_fadeToHSB(0x00, 0, 100, 100 ); // red
-    Serial.println(" VERY HOT - red");
-  } else if (forecast_temp > 26) {
-    BlinkM_fadeToHSB(0x00, 35, 100, 100 ); // orange
-    Serial.println(" HOT - orange ");
-  } else if (forecast_temp < 18) {
-    BlinkM_fadeToHSB(0x00, 225, 50, 100 ); // light blue
-    Serial.println(" COLD - light blue ");
-  } else if (forecast_temp < 13) {
-    BlinkM_fadeToHSB(0x00, 225, 100, 100 ); // dark blue
-    Serial.println(" REALLY COLD - dark blue");
+    BlinkM_fadeToRGB(0x00, 255, 0, 0 ); // red
+    Serial.println(" VERY HOT ");
+  } else if (forecast_temp > 31) {
+    BlinkM_fadeToRGB(0x00, 255, 30, 0 ); // orange
+    Serial.println(" HOT ");
+  } else if (forecast_temp > 29) {
+    BlinkM_fadeToRGB(0x00, 255, 60, 0 ); // orange
+    Serial.println(" HOT ");
+  } else if (forecast_temp > 27) {
+    BlinkM_fadeToRGB(0x00, 255, 90, 0 ); // orange
+    Serial.println(" HOT ");
+  } else if (forecast_temp > 24) {
+    BlinkM_fadeToRGB(0x00, 255, 120, 0 ); // orange
+    Serial.println(" HOT ");
+  } else if (forecast_temp < 14) {
+    BlinkM_fadeToRGB(0x00, 0, 0, 255 ); // blue
+    Serial.println(" REALLY COLD ");
+  } else if (forecast_temp < 19) {
+    BlinkM_fadeToRGB(0x00, 127, 127, 255 ); // light blue
+    Serial.println(" COLD ");
   } else {
-    BlinkM_fadeToHSB(0x00, 60, 100, 100 ); // yellow
-    Serial.println(" NICE - yellow");
+    BlinkM_fadeToRGB(0x00, 0, 255, 0 ); // green
+    Serial.println(" NICE ");
   }
 }
-
 
 /////////////////////
 // Process each char from web
