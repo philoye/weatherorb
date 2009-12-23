@@ -38,17 +38,17 @@ module WeatherOrb
 
     get '/weather.xml' do
       content_type 'text/xml', :charset => 'utf-8'
-      # haml :api, { :format => :xhtml }
-      %(
-      <weather>
-        <condition>Fair</condition>
-        <condition_code>33</condition_code>
-        <temp>25</temp>
-        <forecast>Partly Cloudy</forecast>
-        <forecast_code>29</forecast_code>
-        <low>22</low>
-        <high>9</high>
-      </weather>)
+      haml :api, { :format => :xhtml }
+      # %(
+      # <weather>
+      #   <condition>Fair</condition>
+      #   <condition_code>33</condition_code>
+      #   <temp>25</temp>
+      #   <forecast>Partly Cloudy</forecast>
+      #   <forecast_code>29</forecast_code>
+      #   <low>22</low>
+      #   <high>9</high>
+      # </weather>)
     end      
       
   end
