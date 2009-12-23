@@ -4,6 +4,8 @@
 #include "Wire.h"
 #include "BlinkM_funcs.h"
 
+#define BLINKM_ARDUINO_POWERED 1
+
 // Define Constants
 const int MAX_STRING_LEN = 20;   // Max string length may have to be adjusted depending on data to be extracted
 const int CHECK_INTERVAL = 60;    // Check interval in seconds
@@ -33,7 +35,11 @@ Client client(server, port);
 void setup() {
   Serial.begin(9600);
 
-  BlinkM_beginWithPower();
+  if( BLINKM_ARDUINO_POWERED ) {
+      BlinkM_beginWithPower();
+  } else {
+      BlinkM_begin();
+  }
   BlinkM_playScript( 0x00, 2,0,0 ); // play a script while we’re waiting to show no data received yet
   BlinkM_setFadeSpeed(0x00, 10);
 
@@ -46,17 +52,17 @@ void setup() {
     
     Dhcp.getMacAddress(buffer);
     Dhcp.getLocalIp(buffer);
-    Serial.print("Local IP address: ");
-    printArray(&Serial, ".", buffer, 4, 10);
+/*    Serial.print("Local IP address: ");*/
+/*    printArray(&Serial, ".", buffer, 4, 10);*/
     Dhcp.getSubnetMask(buffer);
     Dhcp.getGatewayIp(buffer);
-    Serial.print("Gateway IP address: ");
-    printArray(&Serial, ".", buffer, 4, 10);
+/*    Serial.print("Gateway IP address: ");*/
+/*    printArray(&Serial, ".", buffer, 4, 10);*/
     Dhcp.getDhcpServerIp(buffer);
     Dhcp.getDnsServerIp(buffer);
     
     delay(5000);
-    Serial.println("connecting...");
+/*    Serial.println("connecting...");*/
 
     if (client.connect()) {
       Serial.println("connected");
