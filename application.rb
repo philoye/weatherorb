@@ -37,10 +37,9 @@ module WeatherOrb
     end
 
     get '/weather.xml' do
-      content_type 'text/xml', :charset => 'utf-8'
+      # content_type 'text/xml', :charset => 'utf-8'
       # haml :api, { :format => :xhtml }
       %(
-      <?xml version='1.0' encoding='utf-8' ?>
       <weather>
         <condition>Fair</condition>
         <condition_code>33</condition_code>
