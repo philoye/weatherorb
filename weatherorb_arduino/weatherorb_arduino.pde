@@ -137,28 +137,20 @@ void processTemp(char* str) {
 
   if (forecast_temp > 35) {
     BlinkM_fadeToRGB(0x00, 255, 0, 0 ); // red
-    Serial.println(" VERY HOT ");
   } else if (forecast_temp > 31) {
     BlinkM_fadeToRGB(0x00, 255, 30, 0 ); // orange
-    Serial.println(" HOT ");
   } else if (forecast_temp > 29) {
     BlinkM_fadeToRGB(0x00, 255, 60, 0 ); // orange
-    Serial.println(" HOT ");
   } else if (forecast_temp > 27) {
     BlinkM_fadeToRGB(0x00, 255, 90, 0 ); // orange
-    Serial.println(" HOT ");
   } else if (forecast_temp > 24) {
     BlinkM_fadeToRGB(0x00, 255, 120, 0 ); // orange
-    Serial.println(" HOT ");
   } else if (forecast_temp < 14) {
     BlinkM_fadeToRGB(0x00, 0, 0, 255 ); // blue
-    Serial.println(" REALLY COLD ");
   } else if (forecast_temp < 19) {
     BlinkM_fadeToRGB(0x00, 127, 127, 255 ); // light blue
-    Serial.println(" COLD ");
   } else {
     BlinkM_fadeToRGB(0x00, 0, 255, 0 ); // green
-    Serial.println(" NICE ");
   }
 }
 
