@@ -1,6 +1,7 @@
 require 'sinatra' 
 require 'haml'
 require 'smoke'
+require 'parsedate'
 
 module WeatherOrb
   class Application < Sinatra::Base
@@ -12,6 +13,9 @@ module WeatherOrb
     helpers do
       def versioned_stylesheet(stylesheet)
         "/#{stylesheet}.css?" + File.mtime(File.join(File.dirname(__FILE__), "public", "#{stylesheet}.css")).to_i.to_s
+      end
+      def day_from_date(datestring)
+        Date.parse(datestring).strftime("%A")
       end
     end
 
