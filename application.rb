@@ -14,6 +14,9 @@ module WeatherOrb
       def versioned_stylesheet(stylesheet)
         "/#{stylesheet}.css?" + File.mtime(File.join(File.dirname(__FILE__), "public", "#{stylesheet}.css")).to_i.to_s
       end
+      def versioned_javascript(js)
+        "/#{js}.js?" + File.mtime(File.join(File.dirname(__FILE__), "public", "#{js}.js")).to_i.to_s
+      end
       def day_from_date(datestring)
         Date.parse(datestring).strftime("%A")
       end
