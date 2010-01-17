@@ -18,5 +18,8 @@
         .condition #{@weather[:forecast][1]["text"].downcase}
 
       .footer
+        %p
+          This simple little weather site (Sydney-only, at the moment) exists to provide this <a href="/weather.xml">XML</a> to an Arduino-powered ambient weather orb.
+      
         %p 
-          Powered by <a href="http://www.sinatrarb.com/">Sinatra</a>, with a bit of <a href="http://developer.yahoo.com/yql/">YQL</a>, a dash of <a href="http://github.com/benschwarz/smoke">Smoke</a>, and served by <a href="http://heroku.com/">Heroku</a>, all for a little <a href="http://www.arduino.cc/">Arudino</a>-based ambient weather orb.
+          Powered by <a href="http://www.sinatrarb.com/">Sinatra</a>, with a bit of <a href="http://developer.yahoo.com/yql/">YQL</a>, a dash of <a href="http://github.com/benschwarz/smoke">Smoke</a>, and served by <a href="http://heroku.com/">Heroku</a>. 
