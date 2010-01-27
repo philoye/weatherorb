@@ -16,10 +16,10 @@
         .temp #{@weather[:condition][:temp]}°
         .condition and #{@weather[:condition][:text].downcase}
         .location in Sydney, Australia
-        .next Forecast for #{day_from_date(@weather[:forecast][0]["date"])}
+        .next #{day_from_date(@weather[:forecast][0]["date"])}
         .forecast High #{@weather[:forecast][0]["high"]}° and Low of #{@weather[:forecast][0]["low"]}°
         .condition #{@weather[:forecast][0]["text"].downcase}
-        .next Forecast for #{day_from_date(@weather[:forecast][1]["date"])}
+        .next #{day_from_date(@weather[:forecast][1]["date"])}
         .forecast High #{@weather[:forecast][1]["high"]}° and Low of #{@weather[:forecast][1]["low"]}°
         .condition #{@weather[:forecast][1]["text"].downcase}
 

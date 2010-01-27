@@ -17,7 +17,7 @@
   $.typeblocker = {
 
     options: {
-      target_width: 300,
+      target_width: 250,
       minimum_font_size: 10
     },
 

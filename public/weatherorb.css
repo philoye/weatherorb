@@ -4,7 +4,7 @@
   font-family: "helvetica neue", helvetica, arial, serif;
   line-height: 1;
   margin: 20px auto;
-  width: 300px;
+  width: 250px;
   text-align: justify;
   }
 .weather {
@@ -17,9 +17,10 @@
 }
 .next {
   margin-top: 5px;
-  border-top: 5px solid #333;
   padding-top: 6px;
   font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 .temp {
   line-height: .85;
