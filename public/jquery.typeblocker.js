@@ -10,15 +10,15 @@
  */
 
 (function($) {
-  $.fn.typeblocker = function(defaults, opts) {
-     $.typeblocker.init(defaults,opts,this);
+  $.fn.typeblocker = function(target_width, opts) {
+     $.typeblocker.init(target_width,opts,this);
   };
 
   $.typeblocker = {
 
     options: {
-      target_width: 250,
-      minimum_font_size: 10
+      minimum_font_size: 10,
+      ignore_child_selector: ""
     },
 
     init: function(target_width, opts, elems){
@@ -26,33 +26,31 @@
        $.extend(this.options, opts);
 
        this.addInlineElements(elems);
-       this.increaseTypeSize();
+       this.increaseTypeSize(target_width);
      },
 
     addInlineElements: function(elems) {
+      var ignore_selector = ":not(" + $.typeblocker.options.ignore_child_selector + ")";
+      
       $(elems).each(function() {
-        $(this).children().wrapInner("<span class='typeblocker_inner'>").children().css("white-space","nowrap");
+        $(this).children(ignore_selector).wrapInner("<span class='typeblocker_inner'>").children().css("white-space","nowrap");
       });
     },
 
-    increaseTypeSize: function() {
+    increaseTypeSize: function(target_width) {
       $(".typeblocker_inner").each(function() {
         var element = $(this);
         var current_font_size = element.css("font-size").slice(0,-2);
-        var target_width = $.typeblocker.options.target_width - element.css("padding-left").slice(0,-2) - element.css("padding-right").slice(0,-2);
+        var new_width = target_width - element.css("padding-left").slice(0,-2) - element.css("padding-right").slice(0,-2);
 
-        while (element.width() < target_width) {
+        while (element.width() < new_width) {
           current_font_size++;
           element.css("font-size",current_font_size);
         }
-        while (element.width() > target_width) {
+        while (element.width() > new_width) {
           current_font_size--;
           element.css("font-size",current_font_size);
         }
-        // if (element.css("font-size").slice(0,-2) < target_width) {
-        //   current_font_size++;
-        //   element.css("font-size",current_font_size);
-        // }
         if (element.css("font-size").slice(0,-2) < $.typeblocker.options.minimum_font_size) {
           element.css("font-size",$.typeblocker.options.minimum_font_size);
         }

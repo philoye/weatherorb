@@ -8,7 +8,7 @@
     %script{ :src => versioned_javascript('jquery.typeblocker'), :type => "text/javascript" }
     :javascript
       $(document).ready(function(){
-        $(".weather").typeblocker();
+        $(".weather").typeblocker(250, { ignore_child_selector: ".next" });
       });
   %body
     .container
