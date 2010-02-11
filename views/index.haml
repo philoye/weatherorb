@@ -12,22 +12,20 @@
       });
   %body
     .container
+
       .weather
-        .temp #{@weather[:condition][:temp]}°
-        .condition and #{@weather[:condition][:text].downcase}
+        .temp #{ @weather[:condition][:temp] }°
+        .condition and #{ @weather[:condition][:text].downcase }
         .location in Sydney, Australia
 
-        .next #{day_from_date(@weather[:forecast][0]["date"])}
-        .forecast High #{@weather[:forecast][0]["high"]}° and Low of #{@weather[:forecast][0]["low"]}°
-        .condition #{@weather[:forecast][0]["text"].downcase}
-
-        .next #{day_from_date(@weather[:forecast][1]["date"])}
-        .forecast High #{@weather[:forecast][1]["high"]}° and Low of #{@weather[:forecast][1]["low"]}°
-        .condition #{@weather[:forecast][1]["text"].downcase}
+        - @weather[:forecast].each do |day|
+          .next #{ day_from_date( day["date"] ) }
+          .forecast High #{ day["high"] }° and Low of #{ day["low"] }°
+          .condition #{ day["text"].downcase }
 
       .footer
         %p
-          This simple little weather site (Sydney-only, at the moment) exists to provide this <a href="/weather.xml">XML</a> to an Arduino-powered ambient weather orb.
+          This simple little weather site (Sydney-only, at the moment) exists to provide this <a href="/weather.xml">XML</a> to an <a href="http://arduino.cc">Arduino</a>-powered ambient weather orb.
       
         %p 
-          Powered by <a href="http://www.sinatrarb.com/">Sinatra</a>, with a bit of <a href="http://developer.yahoo.com/yql/">YQL</a>, a dash of <a href="http://github.com/benschwarz/smoke">Smoke</a>, and served by <a href="http://heroku.com/">Heroku</a>. 
+          Powered by <a href="http://www.sinatrarb.com/">Sinatra</a>, some <a href="http://weather.yahoo.com/australia/new-south-wales/sydney-1105779/">Yahoo Weather</a>, a bit of <a href="http://developer.yahoo.com/yql/">YQL</a>, a dash of <a href="http://github.com/benschwarz/smoke">Smoke</a>, and served by <a href="http://heroku.com/">Heroku</a>. Grab the code on <a href="http://github.com/philoye/weatherorb">GitHub</a>.
