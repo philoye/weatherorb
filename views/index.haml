@@ -2,12 +2,14 @@
 %html
   %head
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %meta{ :name => "viewport", :content => "width=device-width,initial-scale=.9,minimum-scale=.9,maximum-scale=.9,user-scalable=no" }
     %title Weather Orb
     %link{:href => versioned_stylesheet('weatherorb'), :media => "screen", :rel => "stylesheet", :type => "text/css"}
     %script{ :src => "/jquery-1.4.1.min.js", :type => "text/javascript" }
     %script{ :src => versioned_javascript('jquery.typeblocker'), :type => "text/javascript" }
     :javascript
       $(document).ready(function(){
+        setTimeout(function(){window.scrollTo(0, 1);}, 100);
         $(".weather").typeblocker(250, { ignore_child_selector: ".next" });
       });
   %body
