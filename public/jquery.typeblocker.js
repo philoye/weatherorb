@@ -44,6 +44,10 @@
         var new_width = target_width - element.css("padding-left").slice(0,-2) - element.css("padding-right").slice(0,-2);
 
         while (element.width() < new_width) {
+          if (current_font_size > 72) {
+            element.css("line-height",".85");
+            element.css("letter-spacing","-1px");
+          }
           current_font_size++;
           element.css("font-size",current_font_size);
         }
